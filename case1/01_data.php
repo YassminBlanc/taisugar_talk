@@ -29,4 +29,22 @@ for($i = 0; $i < 12; $i++) {
 
         file_put_contents($pageFile, $server_output);
     }
+    $page = file_get_contents($pageFile);
+    $pos = strpos($page, '<div class="d_content">');
+    $posEnd = strpos($page, '</div>', $pos);
+    $items = explode('</li>', substr($page, $pos, $posEnd - $pos));
+    foreach($items AS $item) {
+        $parts = explode('<a href="', $item);
+        if(count($parts) === 2) {
+            $url = substr($parts[1], 0, strpos($parts[1], '"'));
+            $url = str_replace('\\', '/', $url);
+            if(substr($url, 0, 3) === '../') {
+                $url = 'https://www.taisugar.com.tw/' . substr($url, 3);
+            } else {
+                $url = 'https://www.taisugar.com.tw/chinese/' . $url;
+            }
+            $parts[0] = trim(strip_tags($parts[0]));
+            print_r(array($parts[0], $url));
+        }
+    }
 }
