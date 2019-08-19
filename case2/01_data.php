@@ -30,8 +30,19 @@ for($i = 96; $i < 109; $i++) {
     $items = explode('<div class="box_a">', substr($page, $pos, $posEnd - $pos));
     foreach($items AS $item) {
         if(false !== strpos($item, '<div class="Year_Month">')) {
-            $parts = preg_split('/\\s+/', strip_tags($item));
-            print_r($parts);
+            $dom = new DOMDocument;
+            @$dom->loadHTML('<?xml encoding="utf-8" ?>' . $item);
+            $titles = $dom->getElementsByTagName('h3');
+            foreach($titles AS $title) {
+                echo trim($title->nodeValue) . "\n";
+            }
+            $links = $dom->getElementsByTagName('a');
+            foreach ($links as $link){
+                print_r(array(
+                    $link->nodeValue,
+                    $link->getAttribute('href')
+                ));
+            }
         }
     }
 }
